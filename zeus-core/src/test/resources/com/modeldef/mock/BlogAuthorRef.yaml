@@ -1,0 +1,12 @@
+code: blog_auth_ref
+name: mock.BlogAuthorRef
+ref: mock.Author
+since: "1.0"
+properties:
+    - userId:
+        type: string
+        source: BLOG_AUTHER_ID 
+        mapped: id
+    - displayName:
+        type: string
+        mapped: fullName

@@ -1,0 +1,16 @@
+logging:
+    level:
+        com.cumulativeminds : DEBUG
+
+
+authentication.ldap:
+    domain: "springframework.com"
+    root: "dc=springframework,dc=org"
+    userDnPatterns: "uid={0},ou=people"
+    userSearchBase: 
+    userSearchFilter:
+    groupSearchBase: "ou=groups"
+    groupSearchFilter:
+    groupRoleAttribute: ou
+    ldif: classpath:dev-ldap.ldif
+    

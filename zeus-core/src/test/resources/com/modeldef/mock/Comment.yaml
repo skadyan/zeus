@@ -1,0 +1,23 @@
+code: comment
+name: mock.Comment
+since: "1.0"
+properties:
+    - id:
+        type: string
+        key: Yes
+    -  blogId:
+        type: string
+    - summary:
+        type: string
+    - content:
+        type: string
+    - relatedTo:
+        type: string
+    - commentBy:
+        type: mock.CommentUser
+    - updatedTimestamp:
+        type: "datetime"
+source:
+    type: MOCK
+    dataSource: MOCK_SQL_SOURCE
+

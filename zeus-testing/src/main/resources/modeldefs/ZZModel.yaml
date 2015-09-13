@@ -1,0 +1,52 @@
+code: zz_model
+name: mock.ZZModel
+since: "1.0"
+properties:
+    - id:
+        type: string
+        key: Yes
+        source: ENTITY_ID
+    - title:
+        type: string
+        source: TITLE
+    - lastUpdated:
+        type: datetime
+        source: (none)
+    - state:
+        type: string
+        source: c.STATE
+        meta: Yes
+    - runId:
+        type: int
+        source: 
+            nameOrExpr: c.RUN_ID
+            identifier: Yes
+        meta: Yes
+    - runPriority:
+        type: string
+        source: c.RUN_PRIORITY
+        meta: Yes
+source:
+    type: SQL
+    dataSource: IDR
+    integrationModel: PULL
+    changeTrigger: 
+        type: chage_notification
+        data: 
+            - runId
+            - runPriority
+    sourceViewName: V_CUSTOM_MODEL 
+    sourceViewNameAlias: enty
+    changeViewName: V_CUSTOM_MODEL_CHG
+    changeViewNameAlias: chg
+    pendingChangeProvider: dbo.GET_ZEUS_PENDING_CHANGE 
+index:
+    type: ES
+    settings:
+        number_of_replica: 0
+    
+features:
+    - SourceHasEntityState:
+        statusTable: T_CUSTOM_MODEL_STATE
+        statusColumn: STATE
+        statusTimestampColumn: LAST_UPDATED

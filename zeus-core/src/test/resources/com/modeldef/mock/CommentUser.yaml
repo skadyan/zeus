@@ -1,0 +1,10 @@
+code: comment_user
+name: mock.CommentUser
+since: "1.0"
+modelType: embedded
+properties:
+    - email:
+        type: string
+    - displayName:
+        type: string
+        

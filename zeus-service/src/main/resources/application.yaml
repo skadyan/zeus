@@ -1,0 +1,79 @@
+#
+# Specify the Spring Profile. This change be changed by the environment varibale
+# named "APP_ENV". if it is not set default "dev" profile is activated.
+#
+spring.profiles.active: ${APP_ENV:dev}
+
+#
+# Application Name: Usefuly default for obvious configurations
+#
+app.name: zeus
+
+#
+# The web application context path. It is explicitly set
+# to blank to ensure that IDE (eclipse, embedded tomcat) run the application
+# as ROOT application. 
+#
+# Assumption: It is assumed that application will be deployed as ROOT 
+# application. 
+#
+server.context-path: ''
+
+#
+# Below is the logging configuration for the application.
+# by default "logback-<active-profile>.xml  will be read.
+# 
+# If FILE appender is configured, then the log will be written to 
+# file $APP_HOME/log/${app.name}.log ./target/log/${app.name}
+#
+# Note: level can be spcified without having quote(") character but "OFF" must be specified
+# in quote characters, otherwise Yaml Parser will treat the value as boolean false.
+#
+logging:
+    config: classpath:logback-${spring.profiles.active}.xml
+    file: ${APP_HOME:./target}/log/${app.name}.log
+    level:
+        com.cumulativeminds : "DEBUG"
+        org.springframework.beans: "OFF"
+        org.springframework.core: "OFF"
+        org.apache.directory.server.ldap.LdapProtocolHandler: "OFF"
+        
+#
+# jesery application settings. Kindly see class ServiceResourceConfiguration
+# for the usage of these settings
+#        
+zeus.jersey:
+    settings:
+        jersey.config.server.disableMetainfServicesLookup: No
+
+error.whitelabel.enabled: Yes
+
+#
+# Spring setting
+#
+spring:
+    jackson:
+        serialization.write_dates_as_timestamps: No
+    jmx:
+        enabled: Yes
+
+endpoints:
+    health.time-to-live: 1000 #seconds
+    health.sensitive: Yes  
+    shutdown.enabled: Yes
+    jolokia.enabled: Yes
+    jmx:
+        domain: ${app.name}
+        uniqueNames: Yes
+
+jolokia.config:
+    debug:  Yes
+
+management:
+    #address: 127.0.0.1
+    #port: 8081 #-1 for disabling
+    contextPath: /support
+    security:
+        enabled: Yes
+        role:  ZEUS_SYS_SUPPORT
+

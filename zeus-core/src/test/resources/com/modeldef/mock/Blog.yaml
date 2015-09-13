@@ -1,0 +1,21 @@
+code: Blog
+name: mock.Blog
+since: "1.0"
+properties:
+    - id:
+        type: string
+        key: Yes
+    - title:
+        type: string
+    - publishDate:
+        type: date
+    - content:
+        type: string
+    - tags:
+        collection: Yes
+        type: string
+    - author:
+        type: mock.BlogAuthorRef
+source:
+    type: MOCK
+    dataSource: MOCK_SQL_SOURCE

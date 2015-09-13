@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Zz_modelMapper">
+   <update id="updateItemState" parameterType="com.cumulativeminds.zeus.core.spi.ChangeItemChunk">
+     UPDATE T_CUSTOM_MODEL_STATE
+        SET STATE = #{state},
+            STATE = CURRENT_TIMESTAMP
+      WHERE  ENTITY_ID = #{payload.id}
+         AND  c.RUN_ID = #{payload.runId}
+
+   </update>
+
+    <select id="getPendingChangeNotifications" resultMap="pendingRunIds" resultOrdered="true" statementType="CALLABLE" parameterType="java.util.Map">
+         {call dbo.GET_ZEUS_PENDING_CHANGE @ENTITY_CODE = 'ZZ_MODEL' , @BATCH_SIZE = #{batchSize}, @LOCK_EXPIRY_INTERVAL = #{lockExpiryInterval}  , @LOCK_OWNER = #{lockOwner} }
+    </select>
+    <resultMap id="pendingCN" type="java.util.LinkedHashMap">
+          <result property="runId" column="c.RUN_ID" />
+          <result property="runPriority" column="c.RUN_PRIORITY" />
+    </resultMap>
+    <resultMap id="zz_modelResultMap" type="com.cumulativeminds.zeus.core.spi.EntityObject">
+       <id property="id" column="ENTITY_ID" javaType="java.lang.String"/>
+       <id property="runId" column="c.RUN_ID" javaType="java.lang.Integer"/>
+       <result property="runPriority" column="c.RUN_PRIORITY" javaType="java.lang.String"/>
+       <result property="state" column="c.STATE" javaType="java.lang.String"/>
+       <result property="title" column="TITLE" javaType="java.lang.String"/>
+    </resultMap>
+    <select id="getChangedObjects" resultMap="zz_modelResultMap" resultOrdered="true"  parameterType="java.util.Map">
+      SELECT 
+             ENTITY_ID [ENTITY_ID],
+             c.STATE [c.STATE],
+             c.RUN_ID [c.RUN_ID],
+             TITLE [TITLE],
+             c.RUN_PRIORITY [c.RUN_PRIORITY]
+        FROM V_CUSTOM_MODEL  enty
+  INNER JOIN V_CUSTOM_MODEL_CHG chg
+          ON  enty.[ENTITY_ID] = chg.[ENTITY_ID]
+         AND  enty.[c.RUN_ID] = chg.[c.RUN_ID]
+
+       WHERE  c.RUN_ID = #{runId}
+         AND  ENTITY_ID = #{id}
+
+    ORDER BY  [ENTITY_ID],  [c.RUN_ID]
+ </select>
+ 
+<select id="getSpecificObject" resultMap="zz_modelResultMap" resultOrdered="true"  parameterType="java.util.Map">
+      SELECT 
+             ENTITY_ID [ENTITY_ID],
+             c.STATE [c.STATE],
+             c.RUN_ID [c.RUN_ID],
+             TITLE [TITLE],
+             c.RUN_PRIORITY [c.RUN_PRIORITY]
+        FROM V_CUSTOM_MODEL  enty
+  INNER JOIN V_CUSTOM_MODEL_CHG chg
+          ON  enty.[ENTITY_ID] = chg.[ENTITY_ID]
+         AND  enty.[c.RUN_ID] = chg.[c.RUN_ID]
+
+       WHERE  c.RUN_ID = #{runId}
+         AND  ENTITY_ID = #{id}
+
+    ORDER BY  [ENTITY_ID],  [c.RUN_ID]
+ </select>
+ 
+</mapper>

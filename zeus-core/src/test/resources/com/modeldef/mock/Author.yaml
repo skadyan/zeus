@@ -1,0 +1,38 @@
+code: author
+name: mock.Author
+since: "1.0"
+properties:
+    - id:
+        type: string
+        key: Yes
+        source:
+            nameOrExpr: "AUTHOR_ID"            
+    - name:
+        type: string
+    - fullName:
+        type: string
+    - email:
+        type: string
+    - repulation:
+        type: int
+    - effectiveDate:
+        type: datetime
+    - entityVersion:
+        type: int
+    - updateTimestamp:
+        type: datetime
+source:
+    type: MOCK
+    dataSource: IDR
+    integrationModel: PULL
+    changeTrigger: 
+        type: chage_notification
+        data: 
+            - BATCH_ID
+    sourceViewName: V_ZEUS_AUTHOR 
+    sourceViewNameAlias: e
+    changeViewName: V_ZEUS_AUTHOR_CHG
+    changeViewNameAlias: c
+    
+features:
+    - Source

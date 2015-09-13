@@ -1,0 +1,60 @@
+#
+# Define the structure of the Address entity
+#
+code: address
+name: mock.Address
+since: "1.0"
+obsolete: "1.1"
+modelType: root
+propertyGroup: "address"
+properties:
+    - id:
+        type: long
+        key: Yes
+    - firstLine:
+        type: string
+        source: FIRST_LINE
+        propertyGroup: (none)
+    - secondLine:
+        type: string
+        source:
+            expr: SECOND_LINE
+    - landmark:
+        type: string
+        source:
+            expr: LANDMARK
+            alias: LANDMARK
+            identifier: No
+    - city:
+        type: string
+        source: CITY
+    - state:
+        type: string
+        source: STATE
+    - country:
+        type: string
+        source: COUNTRY_CD
+    - tags:
+        collection: Yes
+        type: string
+        
+        
+documentation:
+    title: Represnts the address of a person
+    description: |
+        Address defines the structure to represent the model
+        and it can be used to various type of address like billing
+        shipping etc.
+    examples: 
+        - |
+          Below is a billing address
+          Flat: 420, Street 12A
+          Village Sewah, Panipat
+          India
+
+source:
+    type: MOCK
+    dataSource: MOCK_SQL_SOURCE
+    
+    
+    
