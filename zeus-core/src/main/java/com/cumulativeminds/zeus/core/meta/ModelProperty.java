@@ -23,6 +23,7 @@ public class ModelProperty {
     private boolean keyProperty;
     private String group;
     private boolean indexable;
+    private boolean primitive;
 
     public ModelProperty(String name, Class<?> javaType) {
         this.name = name;
@@ -129,6 +130,14 @@ public class ModelProperty {
 
     void setIndexable(boolean indexable) {
         this.indexable = indexable;
+    }
+
+    void setPrimitive(boolean primitive) {
+        this.primitive = primitive;
+    }
+
+    public boolean isPrimitive() {
+        return primitive;
     }
 
     public String getGroup() {

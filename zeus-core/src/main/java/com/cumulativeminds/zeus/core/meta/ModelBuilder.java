@@ -22,11 +22,13 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.cumulativeminds.zeus.core.Shared;
 import com.cumulativeminds.zeus.core.Zeus;
 import com.cumulativeminds.zeus.core.spi.VersionProvider;
 import com.cumulativeminds.zeus.impl.yaml.TypedValueMapAccessor;
 
 public class ModelBuilder {
+    public static String DEFAULT_INDEX_TYPE = "ES";
     private String source;
     private ModelRegistry modelRegistry;
     private VersionProvider versionProvider;
@@ -213,6 +215,7 @@ public class ModelBuilder {
         boolean indexable = def.getBooleanValue(K.indexable);
         if (isarray) {
             modelProperty.setType(ModelPropertyType.COLLECTION);
+            modelProperty.setPrimitive(primitiveType != null);
         } else if (primitiveType != null) {
             modelProperty.setType(ModelPropertyType.SIMPLE);
         } else {
@@ -274,18 +277,25 @@ public class ModelBuilder {
         if (definition != null) {
             nameOrExpr = definition.getSimpleValue(K.nameOrExpr);
             alias = definition.getSimpleValue(K.alias);
-            identifier = definition.getBooleanValue(K.identifier);
+
+            if (definition.containsKey(K.identifier)) {
+                identifier = definition.getBooleanValue(K.identifier);
+            } else {
+                identifier = modelProperty.isKeyProperty();
+            }
+        } else if (modelProperty.isCompositeProperty()) {
+            if (!modelProperty.isPrimitive()) {
+                nameOrExpr = Shared.NONE;
+            }
         }
 
         nameOrExpr = Zeus.ifNull(nameOrExpr, modelProperty.getName());
         alias = Zeus.ifNull(alias, nameOrExpr);
-        if (!definition.containsKey(K.identifier)) {
-            identifier = modelProperty.isKeyProperty();
-        }
+
         if (K.NONE.equals(nameOrExpr)) {
             modelProperty.setSource(PropertySource.IGNORED);
         } else {
-            if (modelProperty.isCompositeProperty()) {
+            if (modelProperty.isCompositeProperty() && !modelProperty.isPrimitive()) {
                 throw new IllegalModelException(Exceptions.ILLEGAL_USE_OF_SOURCE, source, modelProperty.getName(), nameOrExpr);
             }
             modelProperty.setSource(new PropertySource(nameOrExpr, alias, identifier));
@@ -389,7 +399,7 @@ public class ModelBuilder {
             illegalUseIfSpecified(definition, K.index, source);
         } else {
             if (accessor == null) {
-                throw new IllegalModelException(Exceptions.MISSING_SOURCE_OF_ROOT, source);
+                throw new IllegalModelException(Exceptions.MISSING_INDEX_OF_ROOT, source);
             }
             String type = accessor.getSimpleValue(K.type);
             ModelDataIndex modelDataIndex = modelDefinitionLoader.parseModelDataIndex(type, accessor);

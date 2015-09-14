@@ -11,6 +11,7 @@ properties:
     - id:
         type: long
         key: Yes
+        source: Id
     - firstLine:
         type: string
         source: FIRST_LINE
@@ -37,7 +38,7 @@ properties:
     - tags:
         collection: Yes
         type: string
-        
+        source: (none)
         
 documentation:
     title: Represnts the address of a person
@@ -56,5 +57,8 @@ source:
     type: MOCK
     dataSource: MOCK_SQL_SOURCE
     
+index:
+    type: ES
+     
     
     

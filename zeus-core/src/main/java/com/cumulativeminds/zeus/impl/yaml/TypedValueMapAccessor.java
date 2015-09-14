@@ -53,13 +53,15 @@ public class TypedValueMapAccessor {
         return new TypedValueMapAccessor(source, defs);
     }
 
+    @SuppressWarnings("unchecked")
     public List<TypedValueMapAccessor> getList(K key) {
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> defs = get(key, List.class);
+        List<Object> defs = get(key, List.class);
         List<TypedValueMapAccessor> list = null;
         if (defs != null) {
             list = defs.stream()
-                    .map(e -> new TypedValueMapAccessor(source, e))
+                    .map(e -> new TypedValueMapAccessor(source,
+                            e instanceof String ? Collections.singletonMap(String.valueOf(e), Collections.emptyMap())
+                                    : (Map<String, Object>) e))
                     .collect(Collectors.toList());
         }
         return list;

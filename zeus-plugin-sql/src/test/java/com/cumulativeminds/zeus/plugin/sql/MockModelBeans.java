@@ -13,7 +13,7 @@ public class MockModelBeans {
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public ModelDataIndex ModelDataSource_ES(TypedValueMapAccessor definition) {
+    public static ModelDataIndex ModelDataIndex_ES(TypedValueMapAccessor definition) {
         return new ModelDataIndex("sql-mock", definition);
     }
 }

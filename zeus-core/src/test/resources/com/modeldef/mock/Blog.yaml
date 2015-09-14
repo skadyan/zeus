@@ -19,3 +19,7 @@ properties:
 source:
     type: MOCK
     dataSource: MOCK_SQL_SOURCE
+
+index:
+    type: ES
+    

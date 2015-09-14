@@ -33,6 +33,11 @@ source:
     sourceViewNameAlias: e
     changeViewName: V_ZEUS_AUTHOR_CHG
     changeViewNameAlias: c
-    
+
+index:
+    type: ES
+        
 features:
-    - Source
+    - Source:
+        x:  y
+    

@@ -62,4 +62,6 @@ public interface Exceptions {
 
     // source, property, nameOrExpr
     String ILLEGAL_USE_OF_SOURCE = "ILLEGAL_USE_OF_SOURCE";
+
+    String MISSING_INDEX_OF_ROOT = "MISSING_INDEX_OF_ROOT";
 }
