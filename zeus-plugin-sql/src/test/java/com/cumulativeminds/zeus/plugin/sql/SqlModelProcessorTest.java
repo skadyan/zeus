@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.cumulativeminds.zeus.core.meta.Model;
 
 public class SqlModelProcessorTest extends SqlPluginTestCase {
-    private static boolean debugTest = true;
+    private static boolean debugTest = false;
 
     @Inject
     private SqlMappingGenerator sqlModelProcessor;

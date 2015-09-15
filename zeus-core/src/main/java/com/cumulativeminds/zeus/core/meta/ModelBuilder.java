@@ -14,6 +14,7 @@ import static org.springframework.util.StringUtils.hasText;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -212,7 +213,7 @@ public class ModelBuilder {
         ModelProperty modelProperty = new ModelProperty(name, primitiveType);
 
         boolean isarray = def.getBooleanValue(K.collection);
-        boolean indexable = def.getBooleanValue(K.indexable);
+        boolean indexable = def.getBooleanValue(K.indexable) || true;
         if (isarray) {
             modelProperty.setType(ModelPropertyType.COLLECTION);
             modelProperty.setPrimitive(primitiveType != null);
@@ -260,11 +261,26 @@ public class ModelBuilder {
             illegalUseIfSpecified(def, K.mapped, source, name);
         }
 
+        modelProperty.setIndexable(indexable);
+
         setPropertyGroup(def, modelProperty);
         setPropertySource(def, modelProperty);
+        setPropertyIndex(def, modelProperty);
 
-        modelProperty.setIndexable(indexable);
         return modelProperty;
+    }
+
+    private void setPropertyIndex(TypedValueMapAccessor def, ModelProperty modelProperty) {
+        if (!modelProperty.isIndexable()) {
+            return;
+        }
+
+        TypedValueMapAccessor definition = def.getNestedObject(K.index);
+        if (definition == null) {
+            definition = new TypedValueMapAccessor(Collections.emptyMap());
+        }
+        PropertyIndex propertyIndex = model.getModelDataIndex().newPropertyDefinition(modelProperty, definition);
+        modelProperty.setIndex(propertyIndex);
     }
 
     private void setPropertySource(TypedValueMapAccessor def, ModelProperty modelProperty) {

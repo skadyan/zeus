@@ -19,17 +19,19 @@ import com.cumulativeminds.zeus.core.meta.ModelProperty;
 import com.cumulativeminds.zeus.core.meta.ModelType;
 import com.cumulativeminds.zeus.impl.ModelProcessor;
 import com.cumulativeminds.zeus.template.TemplateEngine;
+import com.cumulativeminds.zeus.util.JsonObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 @Component
 public class ESModelProcessor implements ModelProcessor {
     private TemplateEngine templateEngine;
 
-    private String templateName = "default-es-mapper";
+    private String templateName = "default-elasticsearch-index-def";
 
     @Value("${search.index.default.number_of_shards:5}")
     private int defaultNumberOfShards;
 
-    @Value("${search.index.default.number_of_shards:0}")
+    @Value("${search.index.default.number_of_replicas:0}")
     private int defaultNumberOfReplicas;
 
     @Inject
@@ -54,17 +56,32 @@ public class ESModelProcessor implements ModelProcessor {
         Map<String, Object> vars = new HashMap<>();
         vars.put("model", model);
         vars.put("index", model.getModelDataIndex());
-        vars.put("indexdef", model.getModelDataIndex().getDefinitionAsMap());
+        vars.put("indexdef", createMapOf(model));
         vars.put("helper", new ModelWrapper(model));
         return vars;
+    }
+
+    private Map<String, Object> createMapOf(Model model) {
+        Map<String, Object> def = new HashMap<>(model.getModelDataIndex().getDefinitionAsMap());
+        if (!def.containsKey("number_of_shards")) {
+            def.put("number_of_shards", this.defaultNumberOfShards);
+        }
+
+        if (!def.containsKey("number_of_replicas")) {
+            def.put("number_of_replicas", this.defaultNumberOfReplicas);
+        }
+
+        return def;
     }
 
     public static class ModelWrapper {
 
         private Model model;
+        private JsonObjectMapper jsonObjectMapper;
 
         public ModelWrapper(Model model) {
             this.model = model;
+            this.jsonObjectMapper = new JsonObjectMapper();
         }
 
         public Collection<ModelProperty> getIndexableProperties() {
@@ -76,6 +93,21 @@ public class ESModelProcessor implements ModelProcessor {
                 }
             }
             return indexable;
+        }
+
+        public Collection<ModelProperty> findIndexableChildren(ModelProperty p) {
+            Collection<ModelProperty> properties = p.getChildProperties();
+            Collection<ModelProperty> indexable = new ArrayList<>();
+            for (ModelProperty modelProperty : properties) {
+                if (modelProperty.isIndexable()) {
+                    indexable.add(modelProperty);
+                }
+            }
+            return indexable;
+        }
+
+        public String writeJsonValue(Object v) throws JsonProcessingException {
+            return jsonObjectMapper.writeValueAsString(v);
         }
     }
 }

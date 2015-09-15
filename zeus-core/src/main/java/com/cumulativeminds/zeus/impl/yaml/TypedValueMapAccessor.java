@@ -24,6 +24,10 @@ public class TypedValueMapAccessor {
         this.source = source;
     }
 
+    public TypedValueMapAccessor(Map<String, Object> map) {
+        this(null, map);
+    }
+
     public String getSimpleValue(Keyword key) {
         return get(key, String.class);
     }

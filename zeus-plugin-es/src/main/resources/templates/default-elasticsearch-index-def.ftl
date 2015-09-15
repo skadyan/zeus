@@ -4,11 +4,11 @@
           "number_of_shards"   : ${indexdef.number_of_shards},
           "number_of_replicas" : ${indexdef.number_of_replicas}
         },
-        "entity" : "${index.type}"
+        "entity" : "${model.code}"
     },
    
     "mappings" : {
-      "${index.type}" : {
+      "${model.code}" : {
             "dynamic" : "strict",
             "_all"    : { "enabled": false },
             "_size"   : {"enabled" : true, "store" : true },
@@ -20,16 +20,16 @@
         }  
     }
 }
- 
+
 <#macro jsonValue v>${helper.writeJsonValue(v)}</#macro>
+
 <#macro simpleProperty sp>
 "${sp.name}" : {
-    <#assign attrs = sp.searchIndexPropertyDef.settings >
+    <#assign attrs = sp.index.definition/>
     <#list attrs?keys as prop>
-                      "${prop}" : <@jsonValue v=attrs[prop]> <#if prop_has_next>,
-    </#if></#list>
-   
-                   }</#macro>
+       "${prop}" : <@jsonValue v=attrs[prop] /> <#if prop_has_next>, </#if>
+    </#list>
+}</#macro>
  
 <#macro property p>
     <#if p.type == 'SIMPLE'>
@@ -45,7 +45,7 @@
    "${cp.name}" : {
        "type" : "nested",
        "properties" : {
-     <#list findIndexableChildren(cp) as prop>
+     <#list helper.findIndexableChildren(cp) as prop>
             <@property p=prop /><#if prop_has_next>,</#if>
      </#list>
        }
@@ -56,7 +56,7 @@
    "${cp.name}" : {
      "type" : "object",
      "properties" : {
-         <#list findIndexableChildren(cp) as prop>
+         <#list helper.findIndexableChildren(cp) as prop>
                 <@property p=prop /><#if prop_has_next>,</#if>
          </#list>
      }

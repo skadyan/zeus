@@ -2,6 +2,8 @@ package com.cumulativeminds.zeus.core.meta;
 
 import java.util.Map;
 
+import org.springframework.util.StringUtils;
+
 import com.cumulativeminds.zeus.impl.yaml.TypedValueMapAccessor;
 
 public class ModelDataIndex {
@@ -35,6 +37,14 @@ public class ModelDataIndex {
     }
 
     public void configure(Model model) {
+        if (StringUtils.isEmpty(indexName)) {
+            setIndexName(model.getCode());
+        }
+    }
 
+    protected PropertyIndex newPropertyDefinition(ModelProperty modelProperty, TypedValueMapAccessor definition) {
+        PropertyIndex index = new PropertyIndex(definition.asMap());
+
+        return index;
     }
 }

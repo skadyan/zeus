@@ -10,6 +10,7 @@ public class ModelProperty {
     private final Class<?> javaType;
     private ModelPropertyType type;
     private PropertySource source;
+    private PropertyIndex index;
     private String definitionSource;
 
     private Model owner;
@@ -136,6 +137,9 @@ public class ModelProperty {
         this.primitive = primitive;
     }
 
+    void setIndex(PropertyIndex index) {
+        this.index = index;
+    }
     public boolean isPrimitive() {
         return primitive;
     }
@@ -160,4 +164,7 @@ public class ModelProperty {
         return indexable;
     }
 
+    public PropertyIndex getIndex() {
+        return index;
+    }
 }
