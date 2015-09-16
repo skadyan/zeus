@@ -37,6 +37,8 @@ logging:
         org.springframework.beans: "OFF"
         org.springframework.core: "OFF"
         org.apache.directory.server.ldap.LdapProtocolHandler: "OFF"
+        org.springframework.beans.factory: "OFF"
+        org.springframework.context.annotation: "OFF"
         
 #
 # jesery application settings. Kindly see class ServiceResourceConfiguration
