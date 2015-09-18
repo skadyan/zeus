@@ -1,13 +1,20 @@
 #
 # Specify the Spring Profile. This change be changed by the environment varibale
 # named "APP_ENV". if it is not set default "dev" profile is activated.
-#
 spring.profiles.active: ${APP_ENV:dev}
+
+app.env: ${spring.profiles.active} 
 
 #
 # Application Name: Usefuly default for obvious configurations
 #
 app.name: zeus
+
+#
+# AWS Cloud Settings
+#
+aws.region: us-east-1
+
 
 #
 # The web application context path. It is explicitly set
@@ -79,3 +86,56 @@ management:
         enabled: Yes
         role:  ZEUS_SYS_SUPPORT
 
+hazelcastnode:
+    settings:
+        sharedGlobalTaskTimeoutSeconds: 30
+        forceLocalMemberToBeSafeTimeoutSeconds: 30          
+        #nonStandardClusterJoinerClass: com.cumulativeminds.zeus.infra.NonStandardTcpIpJoinerOverAWS 
+    config:  # Toplevel property for settig the property of com.hazelcast.config.Config object
+       instanceName: ${app.name}  
+       groupConfig:
+            name:  ${app.name}-${app.env} 
+            password: WhatAPa55w0rdInDev
+       networkConfig:
+          port: 5701
+          join:
+            multicastConfig:
+                enabled: false
+            tcpIpConfig:
+                enabled: true
+            awsConfig:
+                enabled: false
+                region: ${aws.region}
+                tagKey: NodeType
+                tagValue: HazelcastNode       
+                accessKey: (none)
+                secretKey: (none)
+                securityGroupName : (none)
+        
+    hazelcast:
+        # These are the hazlecast proeprties which are directly set 
+        # in the Hazelcast instance's config object
+        # see: http://docs.hazelcast.org/docs/3.4/manual/html/configurationproperties.html
+        version.check.enabled: false
+        shutdownhook.enabled: false
+        memcache.enabled: false
+        rest.enabled: false
+        logging.type: slf4j
+        jmx: true
+        jmx.detailed: true
+        
+        application.validation.token: ${app.name}
+        
+        operation.call.timeout.millis: 10000
+        health.monitoring.level: SILENT
+        health.monitoring.delay.seconds: 60
+        
+        io.thread.count: 5
+        socket.receive.buffer.size: 512
+        socket.send.buffer.size: 512
+
+        heartbeat.interval.seconds: 2
+        max.no.heartbeat.seconds: 120
+        max.no.master.confirmation.seconds: 120
+        # in seconds;
+        graceful.shutdown.max.wait: 300

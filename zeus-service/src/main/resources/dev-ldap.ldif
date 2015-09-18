@@ -1,3 +1,5 @@
+version: 1
+
 dn: ou=groups,dc=springframework,dc=org
 objectclass: top
 objectclass: organizationalUnit

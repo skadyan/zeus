@@ -1,4 +1,4 @@
-package com.cumulativeminds.zeus.exceptions.api;
+package com.cumulativeminds.zeus.exceptions.spi;
 
 public interface HasLink {
     String getLink();

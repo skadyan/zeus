@@ -22,6 +22,10 @@ import com.cumulativeminds.zeus.util.MapFlatterner;
 @ConfigurationProperties("zeus.jersey")
 public class ServiceResourceConfiguration extends ResourceConfig {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ServiceResourceConfiguration.class);
+    /**
+     * directly mapped with property defined in context prefixed with:
+     * <code>zeus.jersey.settings</code>
+     */
     private Map<String, Object> settings = new HashMap<String, Object>();
 
     @Inject

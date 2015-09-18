@@ -8,56 +8,34 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import com.cumulativeminds.zeus.infra.tasks.ExecutorStats;
 import com.cumulativeminds.zeus.infra.tasks.GetExecutorStatistics;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.ExecutionCallback;
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
 import com.hazelcast.core.ILock;
 import com.hazelcast.core.Member;
 import com.hazelcast.core.PartitionService;
 
-@Component
 public class HazelcastNode {
     private static final Logger log = LoggerFactory.getLogger(HazelcastNode.class);
-    public static final String NAME = "HzNode";
-
-    private Config config;
+    private final DistributedObjectName SHARED_GLOBAL_EXECUTOR = () -> "SHARED_GLOBAL_EXECUTOR";
 
     private HazelcastInstance hazelcastInstance;
 
     private Map<DistributedObjectName, IExecutorService> freqUsedExecutors;
     private Map<DistributedObjectName, ILock> freqUsedLocks;
+    private Map<String, Object> settings;
 
-    private final DistributedObjectName SHARED_GLOBAL_EXECUTOR;
-
-    @Inject
-    public HazelcastNode(Config config) {
-        this.config = config;
+    public HazelcastNode(HazelcastInstance hazelcastInstance, Map<String, Object> settings) {
+        this.hazelcastInstance = hazelcastInstance;
+        this.settings = settings;
         this.freqUsedExecutors = new HashMap<>();
         this.freqUsedLocks = new HashMap<>();
-        SHARED_GLOBAL_EXECUTOR = () -> "SHARED_GLOBAL_EXECUTOR";
-    }
-
-    @PostConstruct
-    public void init() {
-        hazelcastInstance = Hazelcast.newHazelcastInstance(config);
-        // associate this with user-context
-        hazelcastInstance.getUserContext().put(NAME, this);
-
-        log.info("Hazelcast Node created successfully");
-
     }
 
     public <T> Future<T> runOnClustor(DistributedObjectName service, Callable<T> task) {
@@ -100,14 +78,14 @@ public class HazelcastNode {
         return lock;
     }
 
-    @PreDestroy
     public void destory() {
         PartitionService partitionService = hazelcastInstance.getPartitionService();
         boolean isSafe = partitionService.isLocalMemberSafe();
         if (isSafe) {
             hazelcastInstance.shutdown();
+            log.info("Hazelcast is shutdown now");
         } else {
-            int seconds = getConfigAsInt("forceLocalMemberToBeSafe.timeout", 0);
+            int seconds = getConfigAsInt("forceLocalMemberToBeSafeTimeoutSeconds", 0);
             boolean safe = partitionService.forceLocalMemberToBeSafe(seconds, TimeUnit.SECONDS);
             log.info("Local member was forced to be safe with timeout of {} seconds. Is Local member Safe: {}", seconds, safe);
             hazelcastInstance.shutdown();
@@ -115,10 +93,10 @@ public class HazelcastNode {
     }
 
     private int getConfigAsInt(String name, int defaultValue) {
-        String value = config.getProperty(name);
+        Number number = (Number) settings.get(name);
         int typedValue = defaultValue;
-        if (StringUtils.hasText(value)) {
-            typedValue = Integer.parseInt(value);
+        if (number != null) {
+            typedValue = number.intValue();
         }
 
         return typedValue;
@@ -129,7 +107,7 @@ public class HazelcastNode {
     }
 
     public ExecutorStats getExecutorStats(DistributedObjectName service) {
-        int timeout = getConfigAsInt("sharedGlobalTask.timeout", 30);
+        int timeout = getConfigAsInt("sharedGlobalTaskTimeoutSeconds", 30);
         IdentityHashMap<Member, ExecutorStats> results = new IdentityHashMap<>();
         getSharedGlobalExecutor().submitToAllMembers(GetExecutorStatistics.of(service))
                 .forEach((m, f) -> {
@@ -137,13 +115,12 @@ public class HazelcastNode {
                         ExecutorStats executorStats = f.get(timeout, TimeUnit.SECONDS);
                         results.put(m, executorStats);
                     } catch (Exception e) {
-                        log.warn("Unable to get '{}' executor stats from: {}", service.name(), m);
+                        log.warn("Unable to get '{}' executor stats from: {}. - {}", service.name(), m,e );
                     }
                 });
         ExecutorStats stats = new ExecutorStats();
         results.values().forEach(r -> stats.mergeFrom(r));
         return stats;
-        
     }
 
     public IExecutorService getSharedGlobalExecutor() {
@@ -158,4 +135,9 @@ public class HazelcastNode {
         return hazelcastInstance.getLocalEndpoint().toString();
     }
 
+    public Config getConfig() {
+        return hazelcastInstance.getConfig();
+    }
+    
+    
 }

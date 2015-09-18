@@ -6,15 +6,11 @@ import static org.junit.Assert.assertThat;
 import javax.inject.Inject;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.cumulativeminds.zeus.ServiceTestCase;
 import com.cumulativeminds.zeus.infra.tasks.ExecutorStats;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { HazelcastTestConfig.class })
-public class HazelcastNodeTest {
+public class HazelcastNodeTest extends ServiceTestCase {
     static enum DistributedObjNames implements DistributedObjectName {
         workService
     }
@@ -26,5 +22,8 @@ public class HazelcastNodeTest {
     public void startNodeLocal() throws Exception {
         ExecutorStats stats = node.getExecutorStats(DistributedObjNames.workService);
         assertThat(stats.getStartedTaskCount(), is(0L));
+        String groupName = node.getConfig().getGroupConfig().getName();
+        
+        assertThat(groupName, is("zeus-dev"));
     }
 }

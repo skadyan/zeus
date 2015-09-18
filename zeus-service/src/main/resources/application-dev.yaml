@@ -7,10 +7,13 @@ authentication.ldap:
     domain: "springframework.com"
     root: "dc=springframework,dc=org"
     userDnPatterns: "uid={0},ou=people"
-    userSearchBase: 
-    userSearchFilter:
+    userSearchBase: ou=people,dc=springframework,dc=org
+    userSearchFilter: (uid={0})
     groupSearchBase: "ou=groups"
-    groupSearchFilter:
+    groupSearchFilter: ""
     groupRoleAttribute: ou
     ldif: classpath:dev-ldap.ldif
     
+hazelcastnode:
+      config:  
+       instanceName: null  

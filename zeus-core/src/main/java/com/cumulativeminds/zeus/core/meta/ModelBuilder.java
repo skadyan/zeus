@@ -265,7 +265,9 @@ public class ModelBuilder {
 
         setPropertyGroup(def, modelProperty);
         setPropertySource(def, modelProperty);
-        setPropertyIndex(def, modelProperty);
+        if (model.getModelDataIndex() != null) {
+            setPropertyIndex(def, modelProperty);
+        }
 
         return modelProperty;
     }

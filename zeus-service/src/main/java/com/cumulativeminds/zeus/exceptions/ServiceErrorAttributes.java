@@ -22,9 +22,9 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-import com.cumulativeminds.zeus.exceptions.api.HasErrorCode;
-import com.cumulativeminds.zeus.exceptions.api.HasLink;
-import com.cumulativeminds.zeus.exceptions.api.HasStatusTypeInfo;
+import com.cumulativeminds.zeus.exceptions.spi.HasErrorCode;
+import com.cumulativeminds.zeus.exceptions.spi.HasLink;
+import com.cumulativeminds.zeus.exceptions.spi.HasStatusTypeInfo;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Configuration

@@ -18,7 +18,7 @@ import com.wordnik.swagger.util.SecurityDefinitionDeserializer;
 public class ServiceBeans {
 
     @Bean
-    public static Module swaggerModel() {
+    public static Module swaggerJsonModel() {
         SimpleModule module = new SimpleModule("SwaggerModule");
         module.addDeserializer(Property.class, new PropertyDeserializer());
         module.addDeserializer(Model.class, new ModelDeserializer());
