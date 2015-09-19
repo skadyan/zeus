@@ -1,4 +1,4 @@
-package com.cumulativeminds.zeus.impl;
+package com.cumulativeminds.zeus.plugin.mongostore;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Scope;
 
 import com.cumulativeminds.zeus.core.meta.ModelDataIndex;
 import com.cumulativeminds.zeus.core.meta.ModelDataSource;
-import com.cumulativeminds.zeus.core.meta.ModelDataStore;
 import com.cumulativeminds.zeus.impl.yaml.TypedValueMapAccessor;
 
 @Configuration
@@ -15,7 +14,7 @@ public class MockBeans {
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public static ModelDataSource ModelDataSource_MOCK(TypedValueMapAccessor definition) {
+    public static ModelDataSource ModelDataSource_SQL(TypedValueMapAccessor definition) {
         return new ModelDataSource("MOCK", definition);
     }
 
@@ -23,11 +22,5 @@ public class MockBeans {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public static ModelDataIndex ModelDataIndex_ES(TypedValueMapAccessor definition) {
         return new ModelDataIndex("MOCK", definition);
-    }
-
-    @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public static ModelDataStore ModelDataStore_MDB(TypedValueMapAccessor definition) {
-        return new ModelDataStore("MOCK", definition);
     }
 }

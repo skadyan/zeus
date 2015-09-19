@@ -17,7 +17,9 @@ public enum K implements Keyword {
 
     features,
 
-    index;
+    index, 
+    
+    store;
 
     public static String NONE = "(none)";
 

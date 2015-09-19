@@ -426,6 +426,24 @@ public class ModelBuilder {
         }
 
         return this;
+    }
+
+    public ModelBuilder withModelDataStore() {
+        TypedValueMapAccessor accessor = definition.getNestedObject(K.store);
+        if (model.getModelType() != ModelType.ROOT) {
+            illegalUseIfSpecified(definition, K.store, source);
+        } else {
+            if (accessor == null) {
+                // no store requirement of this
+                return this;
+            }
+            String type = accessor.getSimpleValue(K.type);
+            ModelDataStore modelDataStore = modelDefinitionLoader.parseModelDataStore(type, accessor);
+            modelDataStore.configure(model);
+            model.setModelDataStore(modelDataStore);
+        }
+
+        return this;
 
     }
 

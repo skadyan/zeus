@@ -5,6 +5,7 @@ import org.springframework.beans.factory.BeanFactory;
 import com.cumulativeminds.zeus.core.meta.Model;
 import com.cumulativeminds.zeus.core.meta.ModelDataIndex;
 import com.cumulativeminds.zeus.core.meta.ModelDataSource;
+import com.cumulativeminds.zeus.core.meta.ModelDataStore;
 import com.cumulativeminds.zeus.core.meta.ModelDefinitionParser;
 import com.cumulativeminds.zeus.core.meta.ModelRegistry;
 import com.cumulativeminds.zeus.core.spi.VersionProvider;
@@ -36,4 +37,8 @@ public abstract class AbstractModelDefinitionLoader implements ModelDefinitionPa
         return ModelDataIndex.class.cast(beanFactory.getBean("ModelDataIndex_" + type, definition));
     }
 
+    @Override
+    public ModelDataStore parseModelDataStore(String type, TypedValueMapAccessor definition) {
+        return ModelDataStore.class.cast(beanFactory.getBean("ModelDataStore_" + type, definition));
+    }
 }

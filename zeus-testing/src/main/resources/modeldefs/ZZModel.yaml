@@ -44,7 +44,9 @@ index:
     type: ES
     settings:
         number_of_replica: 0
-    
+store:
+    type: MDB
+    collection: ZZ_Model
 features:
     - SourceHasEntityState:
         statusTable: T_CUSTOM_MODEL_STATE

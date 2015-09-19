@@ -103,6 +103,7 @@ public class YamlModelDefinitionLoader extends AbstractModelDefinitionLoader {
                 .withDocs()
                 .withModelDataSource()
                 .withModelDataIndex()
+                .withModelDataStore()
                 .withProperties()
                 .withFeatures()
                 .build();

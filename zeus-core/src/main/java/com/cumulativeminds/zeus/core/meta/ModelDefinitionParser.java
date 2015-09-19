@@ -10,4 +10,6 @@ public interface ModelDefinitionParser {
     ModelDataSource parseModelDataSource(String type, TypedValueMapAccessor definition);
 
     ModelDataIndex parseModelDataIndex(String type, TypedValueMapAccessor definition);
+    
+    ModelDataStore parseModelDataStore(String type, TypedValueMapAccessor definition);
 }

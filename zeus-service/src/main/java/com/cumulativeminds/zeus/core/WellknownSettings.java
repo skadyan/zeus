@@ -2,6 +2,7 @@ package com.cumulativeminds.zeus.core;
 
 public class WellknownSettings {
 
+    /** string values */
     public static enum S implements Setting<String> {
         ;
 
@@ -12,6 +13,7 @@ public class WellknownSettings {
 
     }
 
+    /** boolean values */
     public static enum B implements Setting<Boolean> {
         includeDeveloperMessage;
 
