@@ -116,4 +116,9 @@ public class TypedValueMapAccessor {
     public Map<String, Object> asMap() {
         return Collections.unmodifiableMap(map);
     }
+    
+    @Override
+    public String toString() {
+        return map.toString();
+    }
 }

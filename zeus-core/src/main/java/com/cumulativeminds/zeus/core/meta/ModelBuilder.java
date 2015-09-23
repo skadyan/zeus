@@ -14,6 +14,7 @@ import static org.springframework.util.StringUtils.hasText;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -210,10 +211,15 @@ public class ModelBuilder {
             throw new IllegalModelException(MISSING_PROPERTY_DATA_TYPE, source, name);
         }
         Class<?> primitiveType = toJavaType(type);
+        boolean indexable = def.getBooleanValue(K.indexable) || true;
+        boolean isarray = def.getBooleanValue(K.collection);
+
         ModelProperty modelProperty = new ModelProperty(name, primitiveType);
 
-        boolean isarray = def.getBooleanValue(K.collection);
-        boolean indexable = def.getBooleanValue(K.indexable) || true;
+        if (primitiveType == null) {
+            modelProperty.setJavaType(isarray ? Collection.class : Object.class);
+        }
+
         if (isarray) {
             modelProperty.setType(ModelPropertyType.COLLECTION);
             modelProperty.setPrimitive(primitiveType != null);
@@ -226,6 +232,7 @@ public class ModelBuilder {
             }
 
             ensureEmbeddedOrRefModelIsReferenced(name, type, referencedModel);
+            modelProperty.setType(ModelPropertyType.COMPOSITE);
         }
 
         if (modelProperty.getType() != ModelPropertyType.SIMPLE) {
@@ -417,9 +424,16 @@ public class ModelBuilder {
             illegalUseIfSpecified(definition, K.index, source);
         } else {
             if (accessor == null) {
-                throw new IllegalModelException(Exceptions.MISSING_INDEX_OF_ROOT, source);
+                Map<String, Object> defaultIndexDefintion = new HashMap<>();
+                defaultIndexDefintion.put(K.type.name(), "ES");
+                accessor = new TypedValueMapAccessor(defaultIndexDefintion);
             }
             String type = accessor.getSimpleValue(K.type);
+
+            if (StringUtils.isEmpty(type) || Shared.NONE.equals(type)) {
+                throw new IllegalModelException(Exceptions.MISSING_INDEX_OF_ROOT, source);
+            }
+
             ModelDataIndex modelDataIndex = modelDefinitionLoader.parseModelDataIndex(type, accessor);
             modelDataIndex.configure(model);
             model.setModelDataIndex(modelDataIndex);

@@ -31,10 +31,22 @@ source:
     dataSource: IDR
     integrationModel: PULL
     changeTrigger: 
-        type: chage_notification
+        type: fields
         data: 
-            - runId
-            - runPriority
+            - runId:
+                type: int
+            - runPriority:
+                type: int
+        allowAdditionalData: true
+    changeTrigger: 
+        type: stream
+        data: 
+            - runId:
+                type: int
+            - runPriority:
+                type: int
+        allowAdditionalData: true
+           
     sourceViewName: V_CUSTOM_MODEL 
     sourceViewNameAlias: enty
     changeViewName: V_CUSTOM_MODEL_CHG

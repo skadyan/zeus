@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ModelProperty {
     private final String name;
-    private final Class<?> javaType;
+    private Class<?> javaType;
     private ModelPropertyType type;
     private PropertySource source;
     private PropertyIndex index;
@@ -166,5 +166,9 @@ public class ModelProperty {
 
     public PropertyIndex getIndex() {
         return index;
+    }
+
+    void setJavaType(Class<?> javaType) {
+        this.javaType = javaType;
     }
 }

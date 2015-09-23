@@ -207,4 +207,9 @@ public class Model {
     public List<ModelProperty> getSourceIdentifiers() {
         return sourceIdentifiersReadOnly;
     }
+
+    @Override
+    public String toString() {
+        return name + " (" + code + ")";
+    }
 }

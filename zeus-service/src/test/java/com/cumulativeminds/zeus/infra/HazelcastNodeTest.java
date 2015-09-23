@@ -23,7 +23,7 @@ public class HazelcastNodeTest extends ServiceTestCase {
         ExecutorStats stats = node.getExecutorStats(DistributedObjNames.workService);
         assertThat(stats.getStartedTaskCount(), is(0L));
         String groupName = node.getConfig().getGroupConfig().getName();
-        
+
         assertThat(groupName, is("zeus-dev"));
     }
 }

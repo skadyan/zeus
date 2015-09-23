@@ -20,6 +20,6 @@ properties:
 source:
     type: MOCK
     dataSource: MOCK_SQL_SOURCE
-
+    integrationModel: PUSH
 index:
     type: ES

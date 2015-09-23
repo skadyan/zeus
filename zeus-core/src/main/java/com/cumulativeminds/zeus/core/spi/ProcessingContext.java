@@ -2,9 +2,8 @@ package com.cumulativeminds.zeus.core.spi;
 
 import com.cumulativeminds.zeus.core.meta.Model;
 
-public interface ProcessingContext extends Iterable<ChangeItem> {
+public interface ProcessingContext extends Iterable<Item> {
     Model getModel();
 
     int size();
-
 }

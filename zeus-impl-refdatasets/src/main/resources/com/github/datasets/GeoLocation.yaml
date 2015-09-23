@@ -1,0 +1,11 @@
+code: airport_geoloc
+name: github.datasets.airport.GeoLocation
+since: "1.0"
+modelType: embedded
+properties:
+    - latitude_deg:
+        type: double
+    - longitude_deg:
+        type: double
+    - elevation_ft:
+        type: double

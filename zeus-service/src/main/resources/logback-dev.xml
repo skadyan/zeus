@@ -29,9 +29,14 @@
 		</triggeringPolicy>
 	</appender>
 
-	<root level="INFO">
+	<appender name="ASYNC5000" class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>5000</queueSize>
+		<discardingThreshold>0</discardingThreshold>
 		<appender-ref ref="CONSOLE" />
-		<appender-ref ref="FILE" />
-	</root>
+        <appender-ref ref="FILE" />
+	</appender>
 
+	<root level="INFO">
+		<appender-ref ref="ASYNC5000" />
+	</root>
 </configuration>

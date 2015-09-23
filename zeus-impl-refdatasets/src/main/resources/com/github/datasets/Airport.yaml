@@ -1,0 +1,39 @@
+code: airport
+name: github.datasets.airport.Airport
+since: "1.0"
+
+properties:
+    - ident:
+        type: string
+        key: true
+    - iata_code:
+        type: string
+    - local_code:
+        type: string
+    - gps_code:
+        type: string
+    - name:
+        type: string
+    - type:
+        type: string
+    - geo_location:
+        type: github.datasets.airport.GeoLocation
+    - continent:
+        type: string
+    - iso_country:
+        type: string
+    - iso_region:
+        type: string
+    - municipality:
+        type: string
+source:
+    type: FlatFile
+    reader: CsvFlatFileReader
+    integrationModel: PUSH
+    data: 
+        - file
+        - runPriority
+    settings:
+        header_line_number: 1
+        
+            

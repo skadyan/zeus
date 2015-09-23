@@ -27,7 +27,7 @@ import com.cumulativeminds.zeus.core.spi.VersionProvider;
 import com.cumulativeminds.zeus.impl.yaml.TypedValueMapAccessor;
 import com.cumulativeminds.zeus.util.YamlObjectMapper;
 
-@Component
+@Component("yamlModelDefintionParser")
 public class YamlModelDefinitionLoader extends AbstractModelDefinitionLoader {
     private static final Logger log = LoggerFactory.getLogger(YamlModelDefinitionLoader.class);
 

@@ -13,12 +13,12 @@ public enum K implements Keyword {
 
     properties, type, key, meta, collection, mapped, indexable,
 
-    source, nameOrExpr, alias, identifier,
+    source, nameOrExpr, alias, identifier, integrationModel, changeTrigger, data,
 
     features,
 
-    index, 
-    
+    index,
+
     store;
 
     public static String NONE = "(none)";

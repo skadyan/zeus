@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="Zz_modelMapper">
-   <update id="updateItemState" parameterType="com.cumulativeminds.zeus.core.spi.ChangeItemChunk">
+ 
+  <update id="updateItemState" parameterType="com.cumulativeminds.zeus.core.spi.ItemChunk">
      UPDATE T_CUSTOM_MODEL_STATE
         SET STATE = #{state},
             STATE = CURRENT_TIMESTAMP
@@ -17,14 +18,17 @@
           <result property="runId" column="c.RUN_ID" />
           <result property="runPriority" column="c.RUN_PRIORITY" />
     </resultMap>
-    <resultMap id="zz_modelResultMap" type="com.cumulativeminds.zeus.core.spi.EntityObject">
+ 
+<resultMap id="zz_modelResultMap" type="com.cumulativeminds.zeus.core.spi.EntityObject">
        <id property="id" column="ENTITY_ID" javaType="java.lang.String"/>
        <id property="runId" column="c.RUN_ID" javaType="java.lang.Integer"/>
        <result property="runPriority" column="c.RUN_PRIORITY" javaType="java.lang.String"/>
        <result property="state" column="c.STATE" javaType="java.lang.String"/>
        <result property="title" column="TITLE" javaType="java.lang.String"/>
-    </resultMap>
-    <select id="getChangedObjects" resultMap="zz_modelResultMap" resultOrdered="true"  parameterType="java.util.Map">
+</resultMap>
+ 
+ 
+<select id="getChangedObjects" resultMap="zz_modelResultMap" resultOrdered="true"  parameterType="java.util.Map">
       SELECT 
              ENTITY_ID [ENTITY_ID],
              c.STATE [c.STATE],
@@ -59,5 +63,6 @@
 
     ORDER BY  [ENTITY_ID],  [c.RUN_ID]
  </select>
+ 
  
 </mapper>

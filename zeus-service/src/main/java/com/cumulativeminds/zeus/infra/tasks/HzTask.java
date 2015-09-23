@@ -24,7 +24,7 @@ public abstract class HzTask<V> implements Callable<V>, HazelcastInstanceAware, 
     @Override
     public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
         BeanFactory beanFactory = (BeanFactory) hazelcastInstance.getUserContext().get(HazelcastNodeFactoryBean.BEAN_FACTORY);
-        
+
         this.hazelcastNode = beanFactory.getBean(HazelcastNode.class);
         this.beanFactory = beanFactory;
     }

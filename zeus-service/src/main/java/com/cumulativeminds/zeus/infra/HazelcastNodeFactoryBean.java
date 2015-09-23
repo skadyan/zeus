@@ -24,7 +24,7 @@ public class HazelcastNodeFactoryBean extends AbstractFactoryBean<HazelcastNode>
 
     private Map<String, Object> hazelcast = new HashMap<>();
     private Map<String, Object> settings = new HashMap<>();
-    
+
     private String instanceName;
 
     private Config config = new Config();

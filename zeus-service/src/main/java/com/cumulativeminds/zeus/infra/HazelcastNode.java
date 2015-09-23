@@ -115,7 +115,7 @@ public class HazelcastNode {
                         ExecutorStats executorStats = f.get(timeout, TimeUnit.SECONDS);
                         results.put(m, executorStats);
                     } catch (Exception e) {
-                        log.warn("Unable to get '{}' executor stats from: {}. - {}", service.name(), m,e );
+                        log.warn("Unable to get '{}' executor stats from: {}. - {}", service.name(), m, e);
                     }
                 });
         ExecutorStats stats = new ExecutorStats();
@@ -138,6 +138,5 @@ public class HazelcastNode {
     public Config getConfig() {
         return hazelcastInstance.getConfig();
     }
-    
-    
+
 }

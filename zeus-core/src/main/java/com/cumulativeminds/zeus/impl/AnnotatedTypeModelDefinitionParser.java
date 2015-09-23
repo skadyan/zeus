@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.cumulativeminds.zeus.core.meta.ModelRegistry;
 import com.cumulativeminds.zeus.core.spi.VersionProvider;
 
-@Component
+@Component("annotatedModelDefintionParser")
 public class AnnotatedTypeModelDefinitionParser extends AbstractModelDefinitionLoader {
 
     @Inject

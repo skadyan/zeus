@@ -25,7 +25,7 @@ import com.cumulativeminds.zeus.core.meta.ModelProperty;
 import com.cumulativeminds.zeus.core.meta.ModelPropertyType;
 import com.cumulativeminds.zeus.core.meta.ModelType;
 import com.cumulativeminds.zeus.core.meta.PropertySource;
-import com.cumulativeminds.zeus.core.spi.ChangeItemChunk;
+import com.cumulativeminds.zeus.core.spi.ItemChunk;
 import com.cumulativeminds.zeus.core.spi.EntityObject;
 import com.cumulativeminds.zeus.impl.ModelProcessor;
 import com.cumulativeminds.zeus.impl.yaml.TypedValueMapAccessor;
@@ -71,7 +71,7 @@ public class SqlMappingGenerator implements ModelProcessor {
     private Map<String, Object> createStateUpdateModel(Model model) {
         Map<String, Object> data = new HashMap<>();
         TypedValueMapAccessor definition = model.getFeature(SourceHasEntityState.class);
-        data.put("parameterType", ChangeItemChunk.class.getName());
+        data.put("parameterType", ItemChunk.class.getName());
 
         List<Map<String, Object>> list = model.getSourceIdentifiers().stream()
                 .map(s -> newMapWithTwoEntries("column", "value", s.getSource().getNameOrExpr(), "payload." + s.getName()))
@@ -108,7 +108,7 @@ public class SqlMappingGenerator implements ModelProcessor {
         }
 
         public List<ModelProperty> getPendingChangeNotificationDataProperties() {
-            List<String> fields = model.getModelDataSource().getChangeTrigger().getFields();
+            Set<String> fields = model.getModelDataSource().getChangeTrigger().getFields();
             List<ModelProperty> list = new ArrayList<>();
             for (String field : fields) {
                 ModelProperty property = model.getProperty(field);

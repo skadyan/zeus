@@ -139,3 +139,12 @@ hazelcastnode:
         max.no.master.confirmation.seconds: 120
         # in seconds;
         graceful.shutdown.max.wait: 300
+
+#
+# List of packages (comma-separated) which needs to be scanned.
+#
+yamlModelBasePackages: com.github.datasets
+  
+annotatedModelBasePackages: null
+
+serverDataDirectory: /temp
