@@ -2,6 +2,7 @@ package com.cumulativeminds.zeus.core;
 
 import javax.inject.Inject;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 @Configuration
 @EnableConfigurationProperties
+@EnableAutoConfiguration
 public class Zeus {
 
     @Inject
@@ -52,6 +54,15 @@ public class Zeus {
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    public static <T> T instantiate(String className, Class<T> requiredType) {
+        try {
+            Object obj = Class.forName(className).newInstance();
+            return requiredType.cast(obj);
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | ClassCastException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

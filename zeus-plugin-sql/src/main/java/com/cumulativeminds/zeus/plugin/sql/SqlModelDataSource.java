@@ -5,7 +5,9 @@ import static org.springframework.util.StringUtils.hasText;
 import org.springframework.util.StringUtils;
 
 import com.cumulativeminds.zeus.core.meta.Model;
+import com.cumulativeminds.zeus.core.meta.ModelBuilder;
 import com.cumulativeminds.zeus.core.meta.ModelDataSource;
+import com.cumulativeminds.zeus.core.spi.ItemReader;
 import com.cumulativeminds.zeus.impl.yaml.TypedValueMapAccessor;
 
 public class SqlModelDataSource extends ModelDataSource {
@@ -42,8 +44,8 @@ public class SqlModelDataSource extends ModelDataSource {
     }
 
     @Override
-    protected void configure(Model owner) {
-        super.configure(owner);
+    protected void configure(Model owner, ModelBuilder modelBuilder) {
+        super.configure(owner, modelBuilder);
         String code = owner.getCode().toUpperCase();
         if (!hasText(sourceViewName)) {
             changeViewName = "T_ZEUS_" + code;
@@ -79,5 +81,9 @@ public class SqlModelDataSource extends ModelDataSource {
 
     public String getSourceViewNameAlias() {
         return sourceViewNameAlias;
+    }
+    @Override
+    public Class<? extends ItemReader> getChangeItemReader() {
+        return null;
     }
 }

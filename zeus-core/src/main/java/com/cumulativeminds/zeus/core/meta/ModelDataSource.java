@@ -1,12 +1,17 @@
 package com.cumulativeminds.zeus.core.meta;
 
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cumulativeminds.zeus.core.spi.ItemReader;
 import com.cumulativeminds.zeus.impl.yaml.TypedValueMapAccessor;
 import com.cumulativeminds.zeus.intergration.ChangeTrigger;
+import com.cumulativeminds.zeus.intergration.ChangeTrigger.ArgType;
+import com.cumulativeminds.zeus.intergration.ChangeTriggerType;
 import com.cumulativeminds.zeus.intergration.ModelSourceIntegrationModel;
 
 public class ModelDataSource {
@@ -44,36 +49,64 @@ public class ModelDataSource {
         this.changeTrigger = changeTrigger;
     }
 
-    protected void configure(Model owner) {
+    protected void configure(Model owner, ModelBuilder modelBuilder) {
+        TypedValueMapAccessor definition = getDefinition();
+
+        parseIntegegrationModel(definition);
+
+        parseChangeTrigger(definition, modelBuilder);
     }
 
     @PostConstruct
     protected void parse() {
-        TypedValueMapAccessor definition = getDefinition();
 
-        parseIntegegrationModel(definition);
-        parseChangeTrigger(definition);
     }
 
-    private void parseChangeTrigger(TypedValueMapAccessor definition) {
+    private void parseChangeTrigger(TypedValueMapAccessor definition, ModelBuilder modelBuilder) {
         TypedValueMapAccessor triggerDefinition = definition.getNestedObject(K.changeTrigger);
-        if (getIntegrationModel() == ModelSourceIntegrationModel.PULL) {
-            if (triggerDefinition == null) {
-                throw new IllegalModelException("Trigger definition must be provided for PULL model in "
-                        + definition.getSource());
-            }
-            String type = triggerDefinition.getSimpleValue(K.type);
-            @SuppressWarnings("unchecked")
-            List<String> filterable = triggerDefinition.get(K.data, List.class);
 
-            ChangeTrigger trigger = new ChangeTrigger(type, new HashSet<>(filterable));
-            this.setChangeTrigger(trigger);
-        } else {
-            if (triggerDefinition != null) {
-                throw new IllegalModelException("Trigger definition cannot be provided for PUSH model in "
+        if (triggerDefinition == null) {
+            throw new IllegalModelException("Trigger definition must be provided model in "
+                    + definition.getSource());
+        }
+        ChangeTriggerType type = toChangeTriggerType(triggerDefinition.getSimpleValue(K.type));
+        if (type == null) {
+            throw new IllegalModelException("Trigger type must be provided model in "
+                    + definition.getSource() + " It can be one of " + Arrays.toString(ChangeTriggerType.values()));
+        }
+
+        if (getIntegrationModel() == ModelSourceIntegrationModel.PULL) {
+            if (type != ChangeTriggerType.urlencoded) {
+                throw new IllegalModelException("Trigger type must be urlencoded for PULL integration mode in "
                         + definition.getSource());
             }
         }
+
+        List<TypedValueMapAccessor> list = triggerDefinition.getList(K.data);
+        Map<String, ChangeTrigger.ArgType> args = parseArgs(list, modelBuilder);
+        ChangeTrigger trigger = new ChangeTrigger(type, args);
+
+        this.setChangeTrigger(trigger);
+
+    }
+
+    private Map<String, ArgType> parseArgs(List<TypedValueMapAccessor> list, ModelBuilder modelBuilder) {
+        Map<String, ArgType> args = new LinkedHashMap<>();
+        for (TypedValueMapAccessor typedValueMapAccessor : list) {
+            String name = typedValueMapAccessor.ensureAndGetSingleKey();
+            TypedValueMapAccessor def = typedValueMapAccessor.getNestedObject(name);
+            String type = def.getSimpleValue(K.type);
+            String format = def.getSimpleValue(K.format);
+            boolean required = def.getBooleanValue(K.required);
+            ArgType arg = new ArgType(modelBuilder.toJavaType(type, format), format, required);
+            args.put(name, arg);
+        }
+
+        return args;
+    }
+
+    private ChangeTriggerType toChangeTriggerType(String text) {
+        return ChangeTriggerType.fromText(text);
     }
 
     private void parseIntegegrationModel(TypedValueMapAccessor definition) {
@@ -85,4 +118,7 @@ public class ModelDataSource {
         this.setIntegrationModel(integrationModel);
     }
 
+    public Class<? extends ItemReader> getChangeItemReader() {
+        return null;
+    }
 }

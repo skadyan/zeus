@@ -8,11 +8,15 @@ import javax.inject.Named;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.util.CollectionUtils;
 
+import com.cumulativeminds.zeus.core.Zeus;
 import com.cumulativeminds.zeus.core.meta.ModelDefinitionParser;
+import com.cumulativeminds.zeus.core.meta.ModelRegistry;
 
 @Configuration
+@Import(Zeus.class)
 public class BootstrapModelDefintionLoader {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BootstrapModelDefintionLoader.class);
 
@@ -30,6 +34,9 @@ public class BootstrapModelDefintionLoader {
     @Value("${annotatedModelBasePackages}")
     private List<String> annotatedModelBasePackages;
 
+    @Inject
+    private ModelRegistry modelRegistry;
+    
     public BootstrapModelDefintionLoader() {
     }
 
@@ -45,4 +52,8 @@ public class BootstrapModelDefintionLoader {
         }
     }
 
+    public ModelRegistry getModelRegistry() {
+        return modelRegistry;
+    }
 }
+

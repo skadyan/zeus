@@ -1,8 +1,10 @@
 package com.cumulativeminds.zeus.api.controller.inbound;
 
-import java.util.Map;
-import java.util.Set;
+import static com.cumulativeminds.zeus.api.controller.SimpleStatus.status;
 
+import java.util.Map;
+
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -12,25 +14,33 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.springframework.core.convert.ConversionService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.cumulativeminds.zeus.api.controller.ModelAwareController;
-import com.cumulativeminds.zeus.api.controller.SimpleStatus;
 import com.cumulativeminds.zeus.api.internal.JerseyUtils;
 import com.cumulativeminds.zeus.api.internal.ModelParam;
+import com.cumulativeminds.zeus.compute.DataProcessorFacade;
 import com.cumulativeminds.zeus.core.meta.Exceptions;
 import com.cumulativeminds.zeus.core.meta.Model;
 import com.cumulativeminds.zeus.core.meta.ModelDataSource;
+import com.cumulativeminds.zeus.core.spi.Change;
 import com.cumulativeminds.zeus.exceptions.BadRequestException;
+import com.cumulativeminds.zeus.intergration.ChangeTrigger.ArgType;
 import com.cumulativeminds.zeus.intergration.ModelSourceIntegrationModel;
 
 @Component
 @Path("/change")
 @Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-public class UrlencodedChangeController extends ModelAwareController {
-    public UrlencodedChangeController() {
+public class UrlencodedChangeController extends InboundController {
+
+    @Inject
+    public UrlencodedChangeController(ConversionService conversionService, DataProcessorFacade dataProcessorFacade) {
+        super(conversionService, dataProcessorFacade);
     }
 
     @POST
@@ -38,20 +48,22 @@ public class UrlencodedChangeController extends ModelAwareController {
             @ModelParam Model model,
             @Context UriInfo uriInfo,
             @Context HttpHeaders httpHeaders) {
-        log.debug("{} - change request of application/x-www-form-urlencoded is received", model);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); // get logged in username
+        log.debug("{} - change request of application/x-www-form-urlencoded is received. user: {}", model, name);
 
         ModelDataSource meta = model.getModelDataSource();
 
         validateThisChangeEventIsSupported(model, meta);
 
         MultivaluedMap<String, String> parameters = JerseyUtils.mergeParameters(uriInfo, form);
-        Set<String> fields = meta.getChangeTrigger().getFields();
-        Map<String, Object> data = JerseyUtils.mapParametersToObject(parameters, fields);
+        Map<String, ArgType> arguments = model.getModelDataSource().getChangeTrigger().getArguments();
+        Map<String, Object> data = mapParametersToObject(parameters, arguments);
 
-        SimpleStatus info = SimpleStatus.status("Change accepted successfully");
-        info.with("jobId", "<jobId>");
+        Change change = new Change(model.getCode(), data);
 
-        return info.build();
+        dataProcessorFacade.submit(change);
+        return status("Request accepted").build(Status.ACCEPTED);
     }
 
     private void validateThisChangeEventIsSupported(Model model, ModelDataSource meta) {

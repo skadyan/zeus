@@ -39,7 +39,7 @@ source:
                 type: int
         allowAdditionalData: true
     changeTrigger: 
-        type: stream
+        type: multipart
         data: 
             - runId:
                 type: int

@@ -4,10 +4,8 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.ws.rs.core.Form;
@@ -15,13 +13,11 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import com.cumulativeminds.zeus.impl.yaml.TypedValueMapAccessor;
-
 public class JerseyUtils {
 
-    public static MultivaluedMap<String, Object> getQueryParametes(UriInfo uriInfo) {
-        MultivaluedMap<String, Object> parameters = new MultivaluedHashMap<>();
-        uriInfo.getQueryParameters().forEach((k, v) -> parameters.add(k, v));
+    public static MultivaluedMap<String, String> getQueryParametes(UriInfo uriInfo) {
+        MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
+        uriInfo.getQueryParameters().forEach((k, v) -> parameters.addAll(k, v));
         return parameters;
 
     }
@@ -45,17 +41,6 @@ public class JerseyUtils {
         list.addAll(l2);
 
         return list;
-    }
-
-    public static Map<String, Object> mapParametersToObject(MultivaluedMap<String, String> parameters,
-            Set<String> fields) {
-        Map<String, Object> currentObject = new HashMap<>();
-        for (String field : fields) {
-            String value = parameters.getFirst(field);
-            currentObject.put(field, value);
-        }
-
-        return currentObject;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.cumulativeminds.zeus.core.spi;
 
 public interface ItemState {
-    String getState();
+    String name();
+    int ordinal();
 }

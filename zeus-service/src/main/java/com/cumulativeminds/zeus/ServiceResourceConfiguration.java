@@ -22,10 +22,7 @@ import com.cumulativeminds.zeus.api.controller.inbound.RawChangeController;
 import com.cumulativeminds.zeus.api.controller.inbound.UrlencodedChangeController;
 import com.cumulativeminds.zeus.api.internal.ModelInjectionBinder;
 import com.cumulativeminds.zeus.core.Zeus;
-import com.cumulativeminds.zeus.core.meta.ModelDataSource;
 import com.cumulativeminds.zeus.integration.BootstrapModelDefintionLoader;
-import com.cumulativeminds.zeus.intergration.ChangeTrigger;
-import com.cumulativeminds.zeus.intergration.ModelSourceIntegrationModel;
 import com.cumulativeminds.zeus.util.MapFlatterner;
 import com.google.common.collect.Sets;
 
@@ -62,7 +59,7 @@ public class ServiceResourceConfiguration extends ResourceConfig {
         bindModelParamBinder();
         register(JacksonMapperProvider.class);
         register(MultiPartFeature.class);
-
+//        register(DefaultExceptionMapper.class);
         register(PingController.class);
         // to make sure we parse all the models
         zeus.getComponent(BootstrapModelDefintionLoader.class);
@@ -85,21 +82,9 @@ public class ServiceResourceConfiguration extends ResourceConfig {
             String fragment = String.format("/%s", code);
             final Resource.Builder builder = Resource.builder().path(fragment);
 
-            ModelDataSource modelDataSource = m.getModelDataSource();
-
-            ModelSourceIntegrationModel sourceIntegrationModel = modelDataSource.getIntegrationModel();
-            if (sourceIntegrationModel == ModelSourceIntegrationModel.PUSH) {
-                builder.addChildResource(Resource.builder(UrlencodedChangeController.class).build());
-                builder.addChildResource(Resource.builder(RawChangeController.class).build());
-                builder.addChildResource(Resource.builder(MultipartFormDataChangeController.class).build());
-
-            }
-
-            ChangeTrigger changeTrigger = modelDataSource.getChangeTrigger();
-
-            if (changeTrigger == null || changeTrigger.isChangeNotificationType()) {
-
-            }
+            builder.addChildResource(Resource.builder(RawChangeController.class).build());
+            builder.addChildResource(Resource.builder(MultipartFormDataChangeController.class).build());
+            builder.addChildResource(Resource.builder(UrlencodedChangeController.class).build());
 
             resources.add(builder.build());
 

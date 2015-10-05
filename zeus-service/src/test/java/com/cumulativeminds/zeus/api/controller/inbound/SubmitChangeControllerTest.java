@@ -14,7 +14,7 @@ public class SubmitChangeControllerTest extends ServiceIntegrationTestCase {
                 .contentType(ContentType.JSON)
                 .body("{ }")
                 .expect()
-                .statusCode(SC_OK)
+                .statusCode(SC_ACCEPTED)
                 .when().post("/airport/change");
     }
 
@@ -25,7 +25,7 @@ public class SubmitChangeControllerTest extends ServiceIntegrationTestCase {
                 .contentType(ContentType.URLENC)
                 .param("runId", 1002)
                 .expect()
-                .statusCode(SC_OK)
+                .statusCode(SC_BAD_REQUEST)
                 .when().post("/airport/change");
     }
 
@@ -38,7 +38,7 @@ public class SubmitChangeControllerTest extends ServiceIntegrationTestCase {
                 .multiPart("runId", 1001)
 
         .expect()
-                .statusCode(SC_OK)
+                .statusCode(SC_ACCEPTED)
 
         .when()
                 .post("/airport/change");

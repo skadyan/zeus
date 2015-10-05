@@ -10,6 +10,12 @@
 	<name>Zeus SQL Source Plugin</name>
 	<dependencies>
 		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.db.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>zeus-core</artifactId>
 			<version>${project.version}</version>

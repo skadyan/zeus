@@ -17,7 +17,7 @@ import com.cumulativeminds.zeus.core.meta.IllegalModelException;
 import com.cumulativeminds.zeus.core.meta.Model;
 import com.cumulativeminds.zeus.core.meta.ModelProperty;
 import com.cumulativeminds.zeus.core.meta.ModelType;
-import com.cumulativeminds.zeus.impl.ModelProcessor;
+import com.cumulativeminds.zeus.core.spi.ModelProcessor;
 import com.cumulativeminds.zeus.template.TemplateEngine;
 import com.cumulativeminds.zeus.util.JsonObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;

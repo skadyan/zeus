@@ -13,6 +13,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Configuration
 public class SpringJerseyConfiguration {
@@ -34,4 +38,15 @@ public class SpringJerseyConfiguration {
             }
         };
     }
+
+    @Bean
+    public static View error() {
+        MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
+        jsonView.getObjectMapper().disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        // kind of hack; if client does not specify application/json as accepted
+        // type.
+        jsonView.setContentType("text/html");
+        return jsonView;
+    }
+
 }

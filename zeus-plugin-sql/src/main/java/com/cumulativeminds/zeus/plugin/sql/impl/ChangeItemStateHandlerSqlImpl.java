@@ -6,6 +6,8 @@ import javax.inject.Inject;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 
 import com.cumulativeminds.zeus.core.meta.Model;
 import com.cumulativeminds.zeus.core.spi.AbstractItemHandler;
@@ -13,6 +15,7 @@ import com.cumulativeminds.zeus.core.spi.ItemStateHandler;
 import com.cumulativeminds.zeus.core.spi.ProcessingContext;
 import com.cumulativeminds.zeus.plugin.sql.SqlK;
 
+@Order(Ordered.LOWEST_PRECEDENCE)
 public class ChangeItemStateHandlerSqlImpl extends AbstractItemHandler implements ItemStateHandler {
 
     private BeanFactory beanFactory;

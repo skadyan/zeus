@@ -16,16 +16,13 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.StatusType;
 
 import org.springframework.boot.autoconfigure.web.DefaultErrorAttributes;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import com.cumulativeminds.zeus.exceptions.spi.HasAdvise;
 import com.cumulativeminds.zeus.exceptions.spi.HasErrorCode;
 import com.cumulativeminds.zeus.exceptions.spi.HasLink;
 import com.cumulativeminds.zeus.exceptions.spi.HasStatusTypeInfo;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Configuration
 public class ServiceErrorAttributes extends DefaultErrorAttributes {
@@ -33,25 +30,12 @@ public class ServiceErrorAttributes extends DefaultErrorAttributes {
     public ServiceErrorAttributes() {
     }
 
-    @Bean
-    protected static View error() {
-        MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
-        jsonView.getObjectMapper().disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        // kind of hack; if client does not specify application/json as accepted
-        // type.
-        jsonView.setContentType("text/html");
-        return jsonView;
-    }
-
-    @Override
-    public Map<String, Object> getErrorAttributes(RequestAttributes requestAttributes, boolean includeStackTrace) {
+    public Map<String, Object> getErrorAttributes(Throwable ex, RequestAttributes requestAttributes, boolean includeStackTrace) {
         Map<String, Object> defaults = super.getErrorAttributes(requestAttributes, includeStackTrace);
 
         Map<String, Object> attrs = new TreeMap<>(defaults);
 
-        attrs.put(timestamp.name(), LocalDateTime.now());
-
-        Throwable throwable = getError(requestAttributes);
+        Throwable throwable = ex == null ? getError(requestAttributes) : ex;
 
         if (throwable instanceof HasStatusTypeInfo) {
             StatusType statusType = ((HasStatusTypeInfo) throwable).getStatusType();
@@ -59,20 +43,33 @@ public class ServiceErrorAttributes extends DefaultErrorAttributes {
         } else if (throwable instanceof WebApplicationException) {
             StatusType statusType = ((WebApplicationException) throwable).getResponse().getStatusInfo();
             addStatus(attrs, throwable, statusType);
-        } else {
-            attrs.put(status.name(), defaults.get("status"));
-            attrs.put(message.name(), defaults.get("message"));
         }
+
         if (throwable instanceof HasLink) {
             attrs.put(link.name(), ((HasLink) throwable).getLink());
         }
         if (throwable instanceof HasErrorCode) {
             attrs.put(code.name(), ((HasErrorCode) throwable).getErrorCode());
         }
-
+        if (throwable instanceof HasAdvise) {
+            attrs.put(message.name(), ((HasAdvise) throwable).getAdvise());
+        }
         if (includeStackTrace && throwable != null) {
             attrs.remove("trace");
             attrs.put(developerMessage.name(), toDeveloperMessage(throwable));
+        }
+
+        attrs.put(timestamp.name(), LocalDateTime.now());
+
+        attrs.remove("error", "None");
+        attrs.remove("message", "No message available");
+        attrs.remove("message", attrs.get("error"));
+        attrs.remove("status", 999);
+
+        if (ex != null) {
+            if (!(attrs.containsKey("exception") || attrs.containsKey("message"))) {
+                attrs.put("exception", ex.getMessage());
+            }
         }
 
         return attrs;
@@ -84,8 +81,7 @@ public class ServiceErrorAttributes extends DefaultErrorAttributes {
         if (msg == null) {
             msg = statusType.getReasonPhrase();
         }
-
-        attrs.put(message.name(), msg);
+        attrs.put("error", msg);
     }
 
     private String toDeveloperMessage(Throwable exception) {
@@ -104,6 +100,11 @@ public class ServiceErrorAttributes extends DefaultErrorAttributes {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public Map<String, Object> getErrorAttributes(RequestAttributes requestAttributes, boolean includeStackTrace) {
+        return getErrorAttributes(null, requestAttributes, includeStackTrace);
     }
 
 }

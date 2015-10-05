@@ -28,12 +28,20 @@ properties:
         type: string
 source:
     type: FlatFile
-    reader: CsvFlatFileReader
     integrationModel: PUSH
-    data: 
-        - file
-        - runPriority
+    changeTrigger:
+        type: multipart
+        data:
+            - file:
+                type: file
+            - runPriority:
+                type: int
+        
+    reader: FlatFileItemReader
     settings:
-        header_line_number: 1
+        linesToSkip: 1
+        file: file
+        
+        
         
             

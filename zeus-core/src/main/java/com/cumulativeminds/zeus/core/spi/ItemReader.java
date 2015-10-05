@@ -1,7 +1,7 @@
 package com.cumulativeminds.zeus.core.spi;
 
-public interface ItemReader<T> {
-    
-    T read();
+public interface ItemReader {
+    void initialize();
+    void read(ItemReaderCallback cb);
 
 }

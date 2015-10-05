@@ -1,4 +1,4 @@
-package com.cumulativeminds.zeus.impl;
+package com.cumulativeminds.zeus.core.spi;
 
 import com.cumulativeminds.zeus.core.meta.Model;
 

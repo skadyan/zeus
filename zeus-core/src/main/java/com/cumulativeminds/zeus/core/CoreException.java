@@ -36,7 +36,7 @@ public class CoreException extends RuntimeException {
         return exceptionCode;
     }
 
-    private static String resolveCodeToMessage(String code, Object[] args) {
+    public static String resolveCodeToMessage(String code, Object[] args) {
         return resourceBundle.getMessage(code, args, Locale.getDefault());
     }
 

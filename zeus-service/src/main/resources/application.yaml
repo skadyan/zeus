@@ -65,7 +65,13 @@ spring:
         serialization.write_dates_as_timestamps: No
     jmx:
         enabled: Yes
-
+    datasource:
+      url: "jdbc:h2:target/db_test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MSSQLServer;"
+      username: sa
+      password: password
+      driveClassName: org.h2.Driver
+      webConsolePath: /console
+  
 endpoints:
     health.time-to-live: 1000 #seconds
     health.sensitive: Yes  
@@ -148,3 +154,13 @@ yamlModelBasePackages: com.github.datasets
 annotatedModelBasePackages: null
 
 serverDataDirectory: /temp
+
+
+esplugin.client:
+    addresses: localhost:9300,localhost:9300
+    settings:
+      cluster.name: XXXX
+  
+indexer:
+  chunkSize: 1000
+ 

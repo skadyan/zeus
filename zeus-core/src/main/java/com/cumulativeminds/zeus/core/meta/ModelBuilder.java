@@ -11,6 +11,7 @@ import static com.cumulativeminds.zeus.core.meta.Exceptions.MISSING_PROPERTY_DAT
 import static com.cumulativeminds.zeus.core.meta.Exceptions.UNSPECIFIED_MODEL_SINCE_VERSION;
 import static org.springframework.util.StringUtils.hasText;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class ModelBuilder {
         types.put("boolean", Boolean.class);
         types.put("datetime", LocalDateTime.class);
         types.put("date", LocalDate.class);
+        types.put("file", File.class);
 
         return types;
     }
@@ -350,7 +352,11 @@ public class ModelBuilder {
         }
     }
 
-    private Class<?> toJavaType(String type) {
+    public Class<?> toJavaType(String type, String format) {
+        return types.get(type);
+    }
+
+    public Class<?> toJavaType(String type) {
         return types.get(type);
     }
 
@@ -399,7 +405,7 @@ public class ModelBuilder {
             }
             String type = accessor.getSimpleValue(K.type);
             ModelDataSource modelDataSource = modelDefinitionLoader.parseModelDataSource(type, accessor);
-            modelDataSource.configure(model);
+            modelDataSource.configure(model, this);
             model.setModelDataSource(modelDataSource);
         }
 

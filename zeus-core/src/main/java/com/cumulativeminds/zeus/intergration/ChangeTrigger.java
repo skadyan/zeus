@@ -1,26 +1,46 @@
 package com.cumulativeminds.zeus.intergration;
 
-import java.util.Set;
+import java.util.Map;
 
 public class ChangeTrigger {
-    private Set<String> fields;
+    public static class ArgType {
+        private Class<?> type;
+        private String format;
+        private boolean required;
 
-    private String type;
+        public ArgType(Class<?> type, String format, boolean required) {
+            this.type = type;
+            this.format = format;
+            this.required = required;
+        }
 
-    public ChangeTrigger(String type, Set<String> fields) {
+        public String getFormat() {
+            return format;
+        }
+
+        public Class<?> getType() {
+            return type;
+        }
+
+        public boolean isRequired() {
+            return required;
+        }
+    }
+
+    private Map<String, ArgType> arguments;
+
+    private ChangeTriggerType type;
+
+    public ChangeTrigger(ChangeTriggerType type, Map<String, ArgType> arguments) {
         this.type = type;
-        this.fields = fields;
+        this.arguments = arguments;
     }
 
-    public Set<String> getFields() {
-        return fields;
-    }
-
-    public String getType() {
+    public ChangeTriggerType getType() {
         return type;
     }
 
-    public boolean isChangeNotificationType() {
-        return "change_notification".equals(type);
+    public Map<String, ArgType> getArguments() {
+        return arguments;
     }
 }

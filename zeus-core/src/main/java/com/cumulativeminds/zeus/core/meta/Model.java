@@ -188,6 +188,10 @@ public class Model {
         return keyProperty;
     }
 
+    public String getKeyPropertyName() {
+        return keyProperty.getName();
+    }
+    
     public ModelProperty getProperty(String name) {
         return properties.get(name);
     }
@@ -211,5 +215,10 @@ public class Model {
     @Override
     public String toString() {
         return name + " (" + code + ")";
+    }
+
+    public String getFieldNameOf(StdFields effectivedate) {
+        // TODO Implement this.
+        return effectivedate.name();
     }
 }

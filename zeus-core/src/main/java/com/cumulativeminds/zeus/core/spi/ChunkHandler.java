@@ -1,5 +1,7 @@
 package com.cumulativeminds.zeus.core.spi;
 
-public interface ChunkHandler {
+import org.springframework.core.Ordered;
+
+public interface ChunkHandler extends Ordered {
     void process(ProcessingContext context);
 }

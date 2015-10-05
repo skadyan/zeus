@@ -10,16 +10,20 @@ public interface Item {
 
     EntityObject getPayload();
 
-    Comparable<?> version();
+    Integer version();
 
-    Comparable<?> scn();
+    String scn();
 
     ItemState getState();
 
     LocalDateTime getEffectiveDate();
 
-    LocalDateTime getLastModified();
+    LocalDateTime getLastUpdated();
 
-    void updateState(ItemState state);
+    void state(ItemState state);
+
+    void lastUpdated(LocalDateTime lastModified);
+
+    void scn(String scn);
 
 }
